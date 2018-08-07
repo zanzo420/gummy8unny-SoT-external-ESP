@@ -104,6 +104,15 @@ int Render()
 				auto Actorrelativelocation = mem.Read<Vector3>(ActorRootComponet + Offsets::RelativeLocation);//owninggameinstance.LocalPlayersPTR->LocalPlayers->PlayerController->PlayerState->RootComponent->RelativeLocation_0;
 				auto ActorYaw = mem.Read<float>(ActorRootComponet + Offsets::RelativeRotationYaw);//owninggameinstance.LocalPlayersPTR->LocalPlayers->PlayerController->PlayerState->RootComponent->RelativeLocation_0;
 
+				auto chunk = ActorID / 0x4000;
+				auto fNamePtr = mem.Read<ULONG_PTR>(GNames + chunk * 8);
+				auto fName = mem.Read<ULONG_PTR>(fNamePtr + 8 * (ActorID % 0x4000));
+				auto rs = mem.Read<text>(fName + 16);
+				std::string name = rs.word;
+				
+				if (name.find("BP_") == std::string::npos)
+					continue;
+				
 				auto ActorWieldedItemComponent = mem.Read<ULONG_PTR>(Actor + Offsets::WieldedItemComponent);
 				auto ActorCurrentWieldedItem = mem.Read<ULONG_PTR>(ActorWieldedItemComponent + Offsets::CurrentlyWieldedItem);
 				auto ActorpWieldedItem = mem.Read<ULONG_PTR>(ActorCurrentWieldedItem + Offsets::WieldableItemName);
@@ -111,18 +120,10 @@ int Render()
 
 				using convert_type = std::codecvt_utf8<wchar_t>;
 				std::wstring_convert<convert_type, wchar_t> converter;
-
 				//use converter (.to_bytes: wstr->str, .from_bytes: str->wstr)
 				std::string ActorItemWieleded_str = converter.to_bytes(ActorItemWieleded);
 
 
-
-				auto chunk = ActorID / 0x4000;
-				auto fNamePtr = mem.Read<ULONG_PTR>(GNames + chunk * 8);
-				auto fName = mem.Read<ULONG_PTR>(fNamePtr + 8 * (ActorID % 0x4000));
-				auto rs = mem.Read<text>(fName + 16);
-
-				std::string name = rs.word;
 
 				AActors info;
 
@@ -513,7 +514,7 @@ int Render()
 
 					ActorArray.push_back(info);
 				}
-				else if (name.find("BP_SmallShipNetProxy") != std::string::npos || name.find("BP_LargeShipNetProxy") != std::string::npos)
+				else if (name.find("BP_SmallShipNetProxy") != std::string::npos || name.find("BP_MediumShipNetProxy") != std::string::npos || name.find("BP_LargeShipNetProxy") != std::string::npos)
 				{
 					info.id = ActorID;
 					info.name = "Ship";
@@ -523,7 +524,7 @@ int Render()
 					info.yaw = ActorYaw;
 					ActorArray.push_back(info);
 				}
-				else if (name.find("BP_SmallShipTemplate_C") != std::string::npos || name.find("BP_LargeShipTemplate_C") != std::string::npos)
+				else if (name.find("BP_SmallShipTemplate_C") != std::string::npos || name.find("BP_MediumShipTemplate_C") != std::string::npos || name.find("BP_LargeShipTemplate_C") != std::string::npos)
 				{
 					info.id = ActorID;
 					info.name = "Ship";
@@ -531,6 +532,19 @@ int Render()
 					info.Location = Actorrelativelocation;
 					info.TopLocation = Vector3(Actorrelativelocation.x, Actorrelativelocation.y, Actorrelativelocation.z + 300);
 					info.yaw = ActorYaw;
+					ActorArray.push_back(info);
+				}
+				///
+				/// SHIPWRECKS
+				///
+				else if (name.find("BP_Shipwreck_01_a_NetProxy_C") != std::string::npos || name.find("BP_Shipwreck_") != std::string::npos)
+				{
+					info.id = ActorID;
+					info.name = "SHIPWRECK";
+					info.type = animalcrate;
+					info.Location = Actorrelativelocation;
+					info.TopLocation = Vector3(Actorrelativelocation.x, Actorrelativelocation.y, Actorrelativelocation.z + 75);
+					
 					ActorArray.push_back(info);
 				}
 				else if (name.find("IslandService") != std::string::npos)
