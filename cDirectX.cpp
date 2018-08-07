@@ -109,7 +109,12 @@ int Render()
 				auto fName = mem.Read<ULONG_PTR>(fNamePtr + 8 * (ActorID % 0x4000));
 				auto rs = mem.Read<text>(fName + 16);
 				std::string name = rs.word;
-				
+
+				if (name.find("IslandService") != std::string::npos)
+				{
+					IslandDataAsset_PTR = mem.Read<ULONG_PTR>(Actor + Offsets::IslandDataAsset);
+				}
+
 				if (name.find("BP_") == std::string::npos)
 					continue;
 				
@@ -161,9 +166,8 @@ int Render()
 					ActorArray.push_back(info);
 
 				}
-				else if (name.find("BP_TreasureChest_P") != std::string::npos || name.find("BP_ShipwreckTreasureChest_P") != std::string::npos || name.find("StrongholdKey") != std::string::npos)
+				else if (name.find("BP_TreasureChest_P") != std::string::npos || name.find("BP_TreasureChest") != std::string::npos && name.find("Proxy") || name.find("BP_ShipwreckTreasureChest_P") != std::string::npos || name.find("BP_ShipwreckTreasureChest") != std::string::npos && name.find("Proxy") || name.find("StrongholdKey") != std::string::npos)
 				{
-
 					info.type = chest;
 					info.Location = Actorrelativelocation;
 					info.TopLocation = Vector3(Actorrelativelocation.x, Actorrelativelocation.y, Actorrelativelocation.z + 50);
@@ -215,7 +219,7 @@ int Render()
 						info.name = "Chest of Legends";
 						info.rareity = Fort;
 					}
-					if (name.find("StrongholdKey") != std::string::npos)
+					if (name.find("StrongholdKey") != std::string::npos || name.find("StrongholdKey") != std::string::npos && name.find("Proxy") != std::string::npos)
 					{
 						info.id = ActorID;
 						info.name = "Stronghold Key";
@@ -223,7 +227,7 @@ int Render()
 					}
 					ActorArray.push_back(info);
 				}
-				else if (name.find("BP_BountyRewardSkull_P") != std::string::npos)
+				else if (name.find("BP_BountyRewardSkull_P") != std::string::npos || name.find("BP_BountyRewardSkull") != std::string::npos && name.find("Proxy") != std::string::npos)
 				{
 
 					info.type = skull;
@@ -342,7 +346,7 @@ int Render()
 //
 // Treasure Artifacts (Shinys)
 //
-				else if (name.find("BP_Treasure_Artifact") != std::string::npos && name.find("Proxy") != std::string::npos || name.find("BP_TreasureArtifact_Wieldable") != std::string::npos)
+				else if (name.find("BP_TreasureArtifact") != std::string::npos || name.find("BP_Treasure_Artifact") != std::string::npos && name.find("Proxy") != std::string::npos || name.find("BP_TreasureArtifact_Wieldable") != std::string::npos)
 				{
 
 					info.type = artifact;
@@ -547,10 +551,6 @@ int Render()
 					
 					ActorArray.push_back(info);
 				}
-				else if (name.find("IslandService") != std::string::npos)
-				{
-					IslandDataAsset_PTR = mem.Read<ULONG_PTR>(Actor + Offsets::IslandDataAsset);
-				}
 				else if (name.find("BP_SunkenCurseArtefact_") != std::string::npos)
 				{
 					info.id = ActorID;
@@ -572,7 +572,6 @@ int Render()
 					ActorArray.push_back(info);
 
 				}
-
 				if (IslandDataAsset_PTR != NULL)
 				{
 					if (name == "BP_TreasureMap_C")
@@ -597,8 +596,7 @@ int Render()
 										if (cTreasureLocation.MapSpaceLocation.x == value.x
 											&& cTreasureLocation.MapSpaceLocation.y == value.y)
 										{
-											new_XMarksTheSpot.push_back(
-												cTreasureLocation.WorldSpaceLocation);
+											new_XMarksTheSpot.push_back(cTreasureLocation.WorldSpaceLocation);
 											break;
 										}
 									}
