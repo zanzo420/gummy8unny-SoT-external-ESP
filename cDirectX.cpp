@@ -535,6 +535,20 @@ int Render()
 					ActorArray.push_back(info);
 				}
 				///
+				/// GHOST SHIPS
+				///
+				else if (name.find("BP_GhostShip") != std::string::npos || name.find("BP_GhostShip") != std::string::npos && name.find("Proxy") != std::string::npos)
+				{
+					info.id = ActorID;
+					info.name = "Ghost Ship";
+					info.type = ship;
+					info.Location = Actorrelativelocation;
+					info.TopLocation = Vector3(Actorrelativelocation.x, Actorrelativelocation.y, Actorrelativelocation.z + 300);
+					info.yaw = ActorYaw;
+					
+					ActorArray.push_back(info);
+				}
+				///
 				/// SHIPWRECKS
 				///
 				else if (name.find("BP_Shipwreck_01_a_NetProxy_C") != std::string::npos || name.find("BP_Shipwreck_") != std::string::npos)
@@ -544,6 +558,20 @@ int Render()
 					info.type = animalcrate;
 					info.Location = Actorrelativelocation;
 					info.TopLocation = Vector3(Actorrelativelocation.x, Actorrelativelocation.y, Actorrelativelocation.z + 75);
+					
+					ActorArray.push_back(info);
+				}
+				///
+				/// Ghostship Captian
+				///
+				else if (name.find("BP_GhostShipCaptain") != std::string::npos)
+				{
+					info.id = ActorID;
+					info.type = skeleton;
+					info.name = "S. Captian";
+					info.rareity = Legendary;
+					info.Location = Actorrelativelocation;
+					info.TopLocation = Vector3(Actorrelativelocation.x, Actorrelativelocation.y, Actorrelativelocation.z + 10);
 					
 					ActorArray.push_back(info);
 				}
